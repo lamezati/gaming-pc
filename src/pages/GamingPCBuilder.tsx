@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sliders, Settings } from 'lucide-react';
+import { Sliders, Settings, Search } from 'lucide-react';
 import PreferencesForm from '../components/PreferencesForm';
 import RecommendationCard from '../components/RecommendationCard';
 import QuickFilters from '../components/QuickFilters';
@@ -70,6 +70,7 @@ export default function GamingPCBuilder() {
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedBuild, setSelectedBuild] = useState<PCBuild | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [preferences, setPreferences] = useState<UserPreferences>({
     buildType: '',
     budget: 1500,
@@ -86,9 +87,18 @@ export default function GamingPCBuilder() {
   };
 
   const filteredBuilds = SAMPLE_BUILDS.filter(build => {
+    // Search filter
+    if (searchTerm && !build.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !build.specs.cpu.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !build.specs.gpu.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
+    
+    // Preference filters
     if (preferences.buildType && build.type !== preferences.buildType) return false;
     if (build.price > preferences.budget) return false;
     
+    // Quick filters
     if (selectedFilters.length === 0) return true;
     
     return selectedFilters.every(filter => {
@@ -117,7 +127,7 @@ export default function GamingPCBuilder() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-8">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {!showRecommendations ? (
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <PreferencesForm
@@ -129,17 +139,31 @@ export default function GamingPCBuilder() {
       ) : (
         <>
           {/* Header section */}
-          <div className="px-4 py-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-4">
+          <div className="px-4 pt-3 pb-2 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="flex justify-between items-center mb-3">
               <h2 className="mobile-heading">Recommended Builds</h2>
+              {/* Only display button on medium and larger screens */}
               <button
                 onClick={() => setShowRecommendations(false)}
-                className="flex items-center text-sm text-blue-600 font-medium p-2 hover:bg-blue-50 rounded-lg"
+                className="hidden md:flex items-center text-sm text-blue-600 font-medium p-2 hover:bg-blue-50 rounded-lg"
               >
                 <Settings className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline">Modify Preferences</span>
-                <span className="sm:hidden">Preferences</span>
+                <span>Modify Preferences</span>
               </button>
+            </div>
+            
+            {/* Search bar */}
+            <div className="relative mb-3">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 bg-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Search builds, components..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
             
             <QuickFilters
@@ -148,49 +172,55 @@ export default function GamingPCBuilder() {
             />
           </div>
           
-          {/* Product grid */}
+          {/* Product grid - Optimized layout for mobile */}
           <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             {filteredBuilds.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg shadow">
-                <div className="mx-auto w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4">
-                  <Sliders className="h-8 w-8 text-gray-400" />
+              <div className="text-center py-10 bg-white rounded-lg shadow">
+                <div className="mx-auto w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+                  <Sliders className="h-6 w-6 text-gray-400" />
                 </div>
                 <h3 className="text-gray-900 font-medium">No matching builds</h3>
-                <p className="mt-2 text-gray-500 max-w-md mx-auto">
+                <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">
                   Try adjusting your filters or preferences to see more options.
                 </p>
-                <div className="mt-6">
+                <div className="mt-4">
                   <button
-                    onClick={() => setSelectedFilters([])}
+                    onClick={() => {
+                      setSelectedFilters([]);
+                      setSearchTerm('');
+                    }}
                     className="btn-secondary text-sm px-4 py-2"
                   >
-                    Clear Filters
+                    Clear All Filters
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredBuilds.map(build => (
-                  <RecommendationCard 
-                    key={build.id} 
-                    build={build}
-                    onClick={() => setSelectedBuild(build)}
-                  />
-                ))}
-              </div>
+              <>
+                {/* Results count for mobile */}
+                <div className="text-xs text-gray-500 mb-2">
+                  Showing {filteredBuilds.length} of {SAMPLE_BUILDS.length} builds
+                </div>
+                
+                {/* Compact grid for mobile */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {filteredBuilds.map(build => (
+                    <RecommendationCard 
+                      key={build.id} 
+                      build={build}
+                      onClick={() => setSelectedBuild(build)}
+                    />
+                  ))}
+                </div>
+              </>
             )}
-            
-            {/* Results count for mobile */}
-            <div className="mt-4 text-center text-sm text-gray-500 md:hidden">
-              Showing {filteredBuilds.length} of {SAMPLE_BUILDS.length} builds
-            </div>
           </div>
           
-          {/* Mobile floating button for preferences */}
-          <div className="mobile-button-container md:hidden">
+          {/* Mobile floating button for preferences - ONLY button on mobile */}
+          <div className="fixed bottom-4 left-0 right-0 flex justify-center z-40">
             <button 
               onClick={() => setShowRecommendations(false)}
-              className="mobile-floating-button"
+              className="btn-primary flex items-center shadow-lg rounded-full px-5 py-3"
             >
               <Settings className="w-4 h-4 mr-2" />
               Modify Preferences

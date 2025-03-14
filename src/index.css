@@ -18,4 +18,65 @@
   .card {
     @apply bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow;
   }
+
+  /* Mobile-specific styles */
+  .mobile-filter-scroll {
+    @apply flex items-center space-x-2 overflow-x-auto pb-4 scrollbar-hide;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+  }
+
+  .mobile-filter-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-filter-item {
+    @apply whitespace-nowrap px-4 py-2 rounded-full transition-colors text-sm font-medium;
+    scroll-snap-align: start;
+  }
+
+  .mobile-heading {
+    @apply text-xl font-bold text-gray-900;
+  }
+
+  .mobile-nav-container {
+    @apply sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200;
+  }
+
+  .mobile-product-card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-102;
+  }
+
+  .mobile-card-image {
+    @apply w-full h-48 object-cover;
+  }
+
+  .mobile-scroll-indicator {
+    @apply flex justify-center space-x-1 mt-2;
+  }
+
+  .mobile-scroll-dot {
+    @apply h-2 w-2 rounded-full bg-gray-300 transition-colors;
+  }
+
+  .mobile-scroll-dot.active {
+    @apply bg-blue-600;
+  }
+
+  .mobile-rating {
+    @apply flex items-center text-yellow-400 font-medium;
+  }
+
+  .mobile-price {
+    @apply text-xl font-bold text-gray-900;
+  }
+
+  .mobile-button-container {
+    @apply fixed bottom-4 left-0 right-0 flex justify-center z-40;
+  }
+
+  .mobile-floating-button {
+    @apply btn-primary shadow-lg rounded-full px-8;
+  }
 }

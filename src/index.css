@@ -21,7 +21,7 @@
 
   /* Mobile-specific styles */
   .mobile-filter-scroll {
-    @apply flex items-center space-x-2 overflow-x-auto pb-4 scrollbar-hide;
+    @apply flex items-center space-x-2 overflow-x-auto pb-4;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
@@ -45,7 +45,7 @@
   }
 
   .mobile-product-card {
-    @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-102;
+    @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105;
   }
 
   .mobile-card-image {

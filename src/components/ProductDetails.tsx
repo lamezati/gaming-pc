@@ -1,6 +1,6 @@
 import React from 'react';
 import { PCBuild } from '../types';
-import { Star, X, ExternalLink, Cpu, Cpu as Gpu, MemoryStick as Memory, HardDrive, ChevronDown, ChevronLeft } from 'lucide-react';
+import { Star, X, ExternalLink, Cpu, Monitor, Database, HardDrive, ChevronDown, ChevronLeft } from 'lucide-react';
 
 interface ProductDetailsProps {
   build: PCBuild;
@@ -74,14 +74,14 @@ export default function ProductDetails({ build, onClose }: ProductDetailsProps) 
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <Gpu className="w-5 h-5 text-green-600" />
+              <Monitor className="w-5 h-5 text-green-600" />
               <div>
                 <p className="text-sm text-gray-500">Graphics Card</p>
                 <p className="font-medium">{build.specs.gpu}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <Memory className="w-5 h-5 text-purple-600" />
+              <Database className="w-5 h-5 text-purple-600" />
               <div>
                 <p className="text-sm text-gray-500">Memory</p>
                 <p className="font-medium">{build.specs.ram}</p>

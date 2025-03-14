@@ -172,7 +172,7 @@ export default function GamingPCBuilder() {
             />
           </div>
           
-          {/* Product grid - Optimized layout for mobile */}
+          {/* Product list - Single column for mobile */}
           <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             {filteredBuilds.length === 0 ? (
               <div className="text-center py-10 bg-white rounded-lg shadow">
@@ -197,13 +197,13 @@ export default function GamingPCBuilder() {
               </div>
             ) : (
               <>
-                {/* Results count for mobile */}
+                {/* Results count */}
                 <div className="text-xs text-gray-500 mb-2">
                   Showing {filteredBuilds.length} of {SAMPLE_BUILDS.length} builds
                 </div>
                 
-                {/* Compact grid for mobile */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {/* Single column layout for mobile, grid for larger screens */}
+                <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-3">
                   {filteredBuilds.map(build => (
                     <RecommendationCard 
                       key={build.id} 

@@ -45,11 +45,13 @@
   }
 
   .mobile-product-card {
-    @apply bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:shadow-md;
+    @apply bg-white rounded-md shadow-sm overflow-hidden transition-all hover:shadow-md mb-2;
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .mobile-card-image {
-    @apply w-full h-24 object-cover;
+    @apply object-cover;
+    background: linear-gradient(to right, #0b0d36, #1a1b46);
   }
 
   .mobile-rating {

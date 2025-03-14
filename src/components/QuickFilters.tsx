@@ -1,5 +1,5 @@
-import React from 'react';
-import { Filter } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface QuickFiltersProps {
   selectedFilters: string[];
@@ -18,18 +18,88 @@ const FILTERS = [
 ];
 
 export default function QuickFilters({ selectedFilters, onFilterChange }: QuickFiltersProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftScroll, setShowLeftScroll] = useState(false);
+  const [showRightScroll, setShowRightScroll] = useState(true);
+
+  // Check if scrolling is needed and update button visibility
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftScroll(scrollLeft > 0);
+      setShowRightScroll(scrollLeft < scrollWidth - clientWidth - 10); // 10px buffer
+    }
+  };
+
+  // Handle scroll buttons
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200;
+      const currentScroll = scrollContainerRef.current.scrollLeft;
+      scrollContainerRef.current.scrollTo({
+        left: direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Update scroll buttons visibility on scroll
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', checkScroll);
+      // Initial check
+      checkScroll();
+      return () => container.removeEventListener('scroll', checkScroll);
+    }
+  }, []);
+
+  // Recheck on window resize
+  useEffect(() => {
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, []);
+
   return (
-    <div className="mb-6">
-      <div className="flex items-center gap-2 overflow-x-auto pb-4">
-        <button className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-full hover:bg-gray-200">
-          <Filter className="w-4 h-4" />
-          <span>All Filters</span>
+    <div className="mb-4 relative">
+      {/* Filter header for mobile */}
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-sm font-semibold text-gray-700">Filters</h3>
+        {(showLeftScroll || showRightScroll) && (
+          <div className="flex space-x-1 md:hidden">
+            <button
+              onClick={() => handleScroll('left')}
+              className={`p-1 rounded-full ${showLeftScroll ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-400'}`}
+              disabled={!showLeftScroll}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handleScroll('right')}
+              className={`p-1 rounded-full ${showRightScroll ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-400'}`}
+              disabled={!showRightScroll}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Scrollable filter container */}
+      <div 
+        ref={scrollContainerRef}
+        className="mobile-filter-scroll"
+      >
+        <button className="mobile-filter-item bg-gray-100 hover:bg-gray-200 text-gray-800 flex items-center">
+          <Filter className="w-3 h-3 mr-1" />
+          <span>All</span>
         </button>
+        
         {FILTERS.map((filter) => (
           <button
             key={filter.value}
             onClick={() => onFilterChange(filter.value)}
-            className={`whitespace-nowrap px-3 py-2 rounded-full transition-colors ${
+            className={`mobile-filter-item ${
               selectedFilters.includes(filter.value)
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-800'

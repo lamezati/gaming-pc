@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserPreferences } from '../types';
-import { ChevronRight, ChevronLeft, GamepadIcon, MonitorIcon, DollarSign, Desktop, Laptop } from 'lucide-react';
+import { ChevronRight, ChevronLeft, GamepadIcon, MonitorIcon, DollarSign, Computer, Settings } from 'lucide-react';
 
 interface PreferencesFormProps {
   preferences: UserPreferences;
@@ -62,7 +62,7 @@ export default function PreferencesForm({ preferences, setPreferences, onComplet
                 }`}
                 onClick={() => updatePreference('buildType', 'prebuilt')}
               >
-                <Desktop className="w-6 h-6 mr-3 text-blue-500" />
+                <Computer className="w-6 h-6 mr-3 text-blue-500" />
                 <div className="text-left">
                   <h3 className="font-semibold mb-1">Pre-built PC</h3>
                   <p className="text-xs text-gray-600">Ready to use, hassle-free setup</p>
@@ -76,7 +76,7 @@ export default function PreferencesForm({ preferences, setPreferences, onComplet
                 }`}
                 onClick={() => updatePreference('buildType', 'custom')}
               >
-                <Laptop className="w-6 h-6 mr-3 text-green-500" />
+                <Settings className="w-6 h-6 mr-3 text-green-500" />
                 <div className="text-left">
                   <h3 className="font-semibold mb-1">Custom Build</h3>
                   <p className="text-xs text-gray-600">Personalized parts selection</p>

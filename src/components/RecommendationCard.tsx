@@ -1,6 +1,6 @@
 import React from 'react';
 import { PCBuild } from '../types';
-import { Star, Cpu, Monitor } from 'lucide-react';
+import { Star, Computer, Settings } from 'lucide-react';
 
 interface RecommendationCardProps {
   build: PCBuild;
@@ -9,7 +9,7 @@ interface RecommendationCardProps {
 
 export default function RecommendationCard({ build, onClick }: RecommendationCardProps) {
   // Determine the component icon based on the build type
-  const BuildIcon = build.type === 'prebuilt' ? Monitor : Cpu;
+  const BuildIcon = build.type === 'prebuilt' ? Computer : Settings;
 
   return (
     <div

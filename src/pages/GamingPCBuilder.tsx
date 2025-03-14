@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SlidersPinned, Settings } from 'lucide-react';
+import { Sliders, Settings } from 'lucide-react';
 import PreferencesForm from '../components/PreferencesForm';
 import RecommendationCard from '../components/RecommendationCard';
 import QuickFilters from '../components/QuickFilters';
@@ -153,7 +153,7 @@ export default function GamingPCBuilder() {
             {filteredBuilds.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg shadow">
                 <div className="mx-auto w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4">
-                  <SlidersPinned className="h-8 w-8 text-gray-400" />
+                  <Sliders className="h-8 w-8 text-gray-400" />
                 </div>
                 <h3 className="text-gray-900 font-medium">No matching builds</h3>
                 <p className="mt-2 text-gray-500 max-w-md mx-auto">

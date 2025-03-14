@@ -21,7 +21,7 @@
 
   /* Mobile-specific styles */
   .mobile-filter-scroll {
-    @apply flex items-center space-x-2 overflow-x-auto pb-4;
+    @apply flex items-center space-x-2 overflow-x-auto pb-2;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
@@ -32,12 +32,12 @@
   }
 
   .mobile-filter-item {
-    @apply whitespace-nowrap px-4 py-2 rounded-full transition-colors text-sm font-medium;
+    @apply whitespace-nowrap px-2.5 py-1.5 rounded-full transition-colors text-xs font-medium;
     scroll-snap-align: start;
   }
 
   .mobile-heading {
-    @apply text-xl font-bold text-gray-900;
+    @apply text-lg font-bold text-gray-900;
   }
 
   .mobile-nav-container {
@@ -45,23 +45,11 @@
   }
 
   .mobile-product-card {
-    @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105;
+    @apply bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:shadow-md;
   }
 
   .mobile-card-image {
-    @apply w-full h-48 object-cover;
-  }
-
-  .mobile-scroll-indicator {
-    @apply flex justify-center space-x-1 mt-2;
-  }
-
-  .mobile-scroll-dot {
-    @apply h-2 w-2 rounded-full bg-gray-300 transition-colors;
-  }
-
-  .mobile-scroll-dot.active {
-    @apply bg-blue-600;
+    @apply w-full h-24 object-cover;
   }
 
   .mobile-rating {
@@ -69,14 +57,31 @@
   }
 
   .mobile-price {
-    @apply text-xl font-bold text-gray-900;
+    @apply text-base font-bold text-gray-900;
   }
 
-  .mobile-button-container {
-    @apply fixed bottom-4 left-0 right-0 flex justify-center z-40;
+  /* Scrollbar hiding utility */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-
-  .mobile-floating-button {
-    @apply btn-primary shadow-lg rounded-full px-8;
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Line clamp for limiting text height */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }

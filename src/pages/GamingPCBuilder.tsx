@@ -349,13 +349,14 @@ export default function GamingPCBuilder() {
           <div className="px-4 pt-3 pb-2 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-3">
               <h2 className="mobile-heading">Recommended Builds</h2>
-              {/* Only display button on medium and larger screens */}
+              {/* Button always visible, but styled differently for desktop/mobile */}
               <button
                 onClick={() => setShowRecommendations(false)}
-                className="hidden md:flex items-center text-sm text-blue-600 font-medium p-2 hover:bg-blue-50 rounded-lg"
+                className="flex items-center text-sm font-medium p-2 hover:bg-blue-50 rounded-lg text-blue-600"
               >
                 <Settings className="w-4 h-4 mr-1" />
-                <span>Modify Preferences</span>
+                <span className="hidden sm:inline">Modify Preferences</span>
+                <span className="inline sm:hidden">Preferences</span>
               </button>
             </div>
             
@@ -421,17 +422,6 @@ export default function GamingPCBuilder() {
                 </div>
               </>
             )}
-          </div>
-          
-          {/* Mobile floating button for preferences - ONLY button on mobile */}
-          <div className="fixed bottom-4 left-0 right-0 flex justify-center z-40">
-            <button 
-              onClick={() => setShowRecommendations(false)}
-              className="btn-primary flex items-center shadow-lg rounded-full px-5 py-3"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Modify Preferences
-            </button>
           </div>
         </>
       )}

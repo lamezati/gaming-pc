@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SlidersPinned, Settings } from 'lucide-react';
 import PreferencesForm from '../components/PreferencesForm';
 import RecommendationCard from '../components/RecommendationCard';
 import QuickFilters from '../components/QuickFilters';
@@ -116,41 +117,87 @@ export default function GamingPCBuilder() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {!showRecommendations ? (
+    <div className="min-h-screen bg-gray-50 pb-8">
+      {!showRecommendations ? (
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <PreferencesForm
             preferences={preferences}
             setPreferences={setPreferences}
             onComplete={() => setShowRecommendations(true)}
           />
-        ) : (
-          <div>
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold">Recommended Builds</h2>
+        </div>
+      ) : (
+        <>
+          {/* Header section */}
+          <div className="px-4 py-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="mobile-heading">Recommended Builds</h2>
               <button
                 onClick={() => setShowRecommendations(false)}
-                className="btn-secondary"
+                className="flex items-center text-sm text-blue-600 font-medium p-2 hover:bg-blue-50 rounded-lg"
               >
-                Modify Preferences
+                <Settings className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">Modify Preferences</span>
+                <span className="sm:hidden">Preferences</span>
               </button>
             </div>
+            
             <QuickFilters
               selectedFilters={selectedFilters}
               onFilterChange={handleFilterChange}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredBuilds.map(build => (
-                <RecommendationCard 
-                  key={build.id} 
-                  build={build}
-                  onClick={() => setSelectedBuild(build)}
-                />
-              ))}
+          </div>
+          
+          {/* Product grid */}
+          <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            {filteredBuilds.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg shadow">
+                <div className="mx-auto w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4">
+                  <SlidersPinned className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-gray-900 font-medium">No matching builds</h3>
+                <p className="mt-2 text-gray-500 max-w-md mx-auto">
+                  Try adjusting your filters or preferences to see more options.
+                </p>
+                <div className="mt-6">
+                  <button
+                    onClick={() => setSelectedFilters([])}
+                    className="btn-secondary text-sm px-4 py-2"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredBuilds.map(build => (
+                  <RecommendationCard 
+                    key={build.id} 
+                    build={build}
+                    onClick={() => setSelectedBuild(build)}
+                  />
+                ))}
+              </div>
+            )}
+            
+            {/* Results count for mobile */}
+            <div className="mt-4 text-center text-sm text-gray-500 md:hidden">
+              Showing {filteredBuilds.length} of {SAMPLE_BUILDS.length} builds
             </div>
           </div>
-        )}
-      </main>
+          
+          {/* Mobile floating button for preferences */}
+          <div className="mobile-button-container md:hidden">
+            <button 
+              onClick={() => setShowRecommendations(false)}
+              className="mobile-floating-button"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Modify Preferences
+            </button>
+          </div>
+        </>
+      )}
 
       {selectedBuild && (
         <ProductDetails

@@ -159,7 +159,7 @@ export default function PreferencesForm({ preferences, setPreferences, onComplet
               Back
             </button>
           ) : (
-            <div /> {/* Empty div for spacing */}
+            <div></div>
           )}
           <button 
             onClick={nextStep} 

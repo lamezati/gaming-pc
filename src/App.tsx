@@ -374,20 +374,20 @@ function App() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 py-2 focus:border-blue-500 focus:ring-blue-500 text-sm md:text-base"
+                  className="block w-full rounded-md border-gray-300 bg-white pl-10 py-2 focus:border-blue-500 focus:ring-blue-500 text-sm md:text-base"
                   placeholder="Search builds, components..."
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center">
-                  <div className="h-full flex items-center border-l border-gray-300 pr-1">
-                    <button className="p-2 text-gray-400 hover:text-gray-500">
-                      <ChevronLeft className="h-5 w-5" />
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-500">
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
               </div>
+            </div>
+
+            {/* Filter navigation arrows */}
+            <div className="flex justify-end mb-4">
+              <button className="p-2 text-gray-400 hover:text-gray-500">
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button className="p-2 text-gray-400 hover:text-gray-500">
+                <ChevronRight className="h-5 w-5" />
+              </button>
             </div>
 
             <QuickFilters

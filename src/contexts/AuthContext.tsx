@@ -1,81 +1,92 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   User, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  signOut as firebaseSignOut,
+  signOut, 
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../firebase/config';
 
 interface AuthContextType {
   currentUser: User | null;
-  loading: boolean;
-  signUp: (email: string, password: string) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
+  isLoading: boolean;
+  signUp: (email: string, password: string) => Promise<User>;
+  signIn: (email: string, password: string) => Promise<User>;
+  signInWithGoogle: () => Promise<User>;
+  logOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function useAuth() {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
+};
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  async function signUp(email: string, password: string) {
+  // Sign up with email and password
+  const signUp = (email: string, password: string): Promise<User> => {
     return createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        // Additional setup for new users could go here
-      });
-  }
+      .then((userCredential) => userCredential.user);
+  };
 
-  async function signIn(email: string, password: string) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
+  // Sign in with email and password
+  const signIn = (email: string, password: string): Promise<User> => {
+    return signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => userCredential.user);
+  };
 
-  async function signOut() {
-    return firebaseSignOut(auth);
-  }
+  // Sign in with Google
+  const signInWithGoogle = (): Promise<User> => {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider)
+      .then((result) => result.user);
+  };
 
-  async function resetPassword(email: string) {
+  // Log out
+  const logOut = (): Promise<void> => {
+    return signOut(auth);
+  };
+
+  // Reset password
+  const resetPassword = (email: string): Promise<void> => {
     return sendPasswordResetEmail(auth, email);
-  }
+  };
 
+  // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      setLoading(false);
+      setIsLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
-  const value = {
+  const value: AuthContextType = {
     currentUser,
-    loading,
+    isLoading,
     signUp,
     signIn,
-    signOut,
+    signInWithGoogle,
+    logOut,
     resetPassword
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
-}
+};

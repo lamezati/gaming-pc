@@ -65,6 +65,19 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
               Create Account
             </button>
           </div>
+
+          <div className="mt-6 text-center text-sm text-gray-500">
+            <p>
+              By signing in, you agree to our{' '}
+              <a href="#" className="text-blue-600 hover:text-blue-500">
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="#" className="text-blue-600 hover:text-blue-500">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 

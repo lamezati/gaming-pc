@@ -4,7 +4,7 @@ export interface PCBuild {
   type: 'prebuilt' | 'custom';
   price: number;
   image: string;
-  images?: string[]; // Array of additional images
+  images: string[];
   description: string;
   specs: {
     cpu: string;

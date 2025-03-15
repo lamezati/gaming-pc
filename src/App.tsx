@@ -6,6 +6,7 @@ import QuickFilters from './components/QuickFilters';
 import ProductDetails from './components/ProductDetails';
 import Auth, { AuthMode } from './components/Auth';
 import UserProfile from './components/UserProfile';
+import AuthGuard from './components/AuthGuard';
 import { useAuth } from './contexts/AuthContext';
 import { UserPreferences, PCBuild } from './types';
 
@@ -276,14 +277,13 @@ const SAMPLE_BUILDS: PCBuild[] = [
   },
 ];
 
-function App() {
+function MainApp() {
   const [showRecommendations, setShowRecommendations] = useState(true); // Default to showing recommendations
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedBuild, setSelectedBuild] = useState<PCBuild | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.Closed);
   const [showUserProfile, setShowUserProfile] = useState(false);
-  const { currentUser } = useAuth();
+  const { currentUser, logOut } = useAuth();
   const [preferences, setPreferences] = useState<UserPreferences>({
     buildType: '',
     budget: 1500,
@@ -339,11 +339,16 @@ function App() {
     });
   });
 
-  const handleAuthClick = () => {
-    if (currentUser) {
-      setShowUserProfile(true);
-    } else {
-      setAuthMode(AuthMode.SignIn);
+  const handleUserProfileClick = () => {
+    setShowUserProfile(true);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      setShowUserProfile(false);
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
   };
 
@@ -357,13 +362,11 @@ function App() {
               <h1 className="ml-3 text-2xl font-bold text-gray-900">Gaming PC Builder</h1>
             </div>
             <button
-              onClick={handleAuthClick}
+              onClick={handleUserProfileClick}
               className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100"
             >
               <User className="w-6 h-6 text-blue-600" />
-              <span className="text-sm font-medium">
-                {currentUser ? currentUser.email?.split('@')[0] : 'Sign In'}
-              </span>
+              <span className="text-sm font-medium">{currentUser?.email?.split('@')[0] || 'User'}</span>
             </button>
           </div>
         </div>
@@ -425,19 +428,9 @@ function App() {
         )}
       </main>
 
-      {/* Auth Components */}
-      {authMode !== AuthMode.Closed && (
-        <Auth
-          mode={authMode}
-          onClose={() => setAuthMode(AuthMode.Closed)}
-        />
-      )}
-
       {/* User Profile */}
       {showUserProfile && (
-        <UserProfile
-          onClose={() => setShowUserProfile(false)}
-        />
+        <UserProfile onClose={() => setShowUserProfile(false)} />
       )}
 
       {/* Product Details */}
@@ -448,6 +441,14 @@ function App() {
         />
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthGuard>
+      <MainApp />
+    </AuthGuard>
   );
 }
 

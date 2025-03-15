@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Monitor, Search, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Monitor, Search, Settings } from 'lucide-react';
 import PreferencesForm from './components/PreferencesForm';
 import RecommendationCard from './components/RecommendationCard';
 import QuickFilters from './components/QuickFilters';
@@ -365,7 +365,7 @@ function App() {
             </div>
 
             {/* Search bar */}
-            <div className="relative mb-6">
+            <div className="relative mb-2">
               <div className="relative rounded-md shadow-sm">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Search className="h-5 w-5 text-gray-400" />
@@ -378,16 +378,6 @@ function App() {
                   placeholder="Search builds, components..."
                 />
               </div>
-            </div>
-
-            {/* Filter navigation arrows */}
-            <div className="flex justify-end mb-4">
-              <button className="p-2 text-gray-400 hover:text-gray-500">
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-gray-500">
-                <ChevronRight className="h-5 w-5" />
-              </button>
             </div>
 
             <QuickFilters

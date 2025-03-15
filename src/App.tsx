@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Monitor, Search, Settings, User } from 'lucide-react';
 import PreferencesForm from './components/PreferencesForm';
 import RecommendationCard from './components/RecommendationCard';
 import QuickFilters from './components/QuickFilters';
 import ProductDetails from './components/ProductDetails';
-import Auth, { AuthMode } from './components/Auth';
 import UserProfile from './components/UserProfile';
 import AuthGuard from './components/AuthGuard';
 import { useAuth } from './contexts/AuthContext';
 import { UserPreferences, PCBuild } from './types';
+import { getUserPreferences, saveUserPreferences } from './firebase/userProfile';
 
 const SAMPLE_BUILDS: PCBuild[] = [
   {
@@ -283,13 +283,50 @@ function MainApp() {
   const [selectedBuild, setSelectedBuild] = useState<PCBuild | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserProfile, setShowUserProfile] = useState(false);
-  const { currentUser, logOut } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const { currentUser } = useAuth();
   const [preferences, setPreferences] = useState<UserPreferences>({
     buildType: '',
     budget: 1500,
     primaryUse: '',
     preferredGames: [],
   });
+
+  // Load user preferences on login
+  useEffect(() => {
+    const loadUserPreferences = async () => {
+      if (currentUser) {
+        setIsLoading(true);
+        try {
+          const userPrefs = await getUserPreferences(currentUser.uid);
+          if (userPrefs) {
+            setPreferences(userPrefs);
+          }
+        } catch (error) {
+          console.error('Error loading user preferences:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadUserPreferences();
+  }, [currentUser]);
+
+  // Save preferences when they change
+  const handleUpdatePreferences = async (newPreferences: UserPreferences) => {
+    setPreferences(newPreferences);
+    setShowRecommendations(true);
+    
+    // Save to Firestore if user is logged in
+    if (currentUser) {
+      try {
+        await saveUserPreferences(currentUser.uid, newPreferences);
+      } catch (error) {
+        console.error('Error saving preferences:', error);
+      }
+    }
+  };
 
   const handleFilterChange = (filter: string) => {
     setSelectedFilters(prev =>
@@ -343,15 +380,6 @@ function MainApp() {
     setShowUserProfile(true);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await logOut();
-      setShowUserProfile(false);
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
@@ -373,10 +401,14 @@ function MainApp() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {!showRecommendations ? (
+        {isLoading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : !showRecommendations ? (
           <PreferencesForm
             preferences={preferences}
-            setPreferences={setPreferences}
+            setPreferences={handleUpdatePreferences}
             onComplete={() => setShowRecommendations(true)}
           />
         ) : (
@@ -423,6 +455,12 @@ function MainApp() {
                   />
                 ))}
               </div>
+              
+              {filteredBuilds.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">No builds found matching your criteria. Try adjusting your filters or search query.</p>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Monitor, Settings } from 'lucide-react';
+import { Monitor, Search, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 import PreferencesForm from './components/PreferencesForm';
 import RecommendationCard from './components/RecommendationCard';
 import QuickFilters from './components/QuickFilters';
@@ -277,6 +277,7 @@ function App() {
   const [showRecommendations, setShowRecommendations] = useState(true); // Default to showing recommendations
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedBuild, setSelectedBuild] = useState<PCBuild | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [preferences, setPreferences] = useState<UserPreferences>({
     buildType: '',
     budget: 1500,
@@ -293,9 +294,18 @@ function App() {
   };
 
   const filteredBuilds = SAMPLE_BUILDS.filter(build => {
+    // Apply search filter
+    if (searchQuery && !build.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !build.specs.cpu.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !build.specs.gpu.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    
+    // Apply preference filters
     if (preferences.buildType && build.type !== preferences.buildType) return false;
     if (build.price > preferences.budget) return false;
     
+    // Apply quick filters
     if (selectedFilters.length === 0) return true;
     
     return selectedFilters.every(filter => {
@@ -347,24 +357,54 @@ function App() {
               <h2 className="text-2xl font-bold">Recommended Builds</h2>
               <button
                 onClick={() => setShowRecommendations(false)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
+                className="flex items-center gap-2 text-blue-600"
               >
                 <Settings size={20} />
                 <span>Preferences</span>
               </button>
             </div>
+
+            {/* Search bar */}
+            <div className="relative mb-6">
+              <div className="relative rounded-md shadow-sm">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 py-2 focus:border-blue-500 focus:ring-blue-500 text-sm md:text-base"
+                  placeholder="Search builds, components..."
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center">
+                  <div className="h-full flex items-center border-l border-gray-300 pr-1">
+                    <button className="p-2 text-gray-400 hover:text-gray-500">
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button className="p-2 text-gray-400 hover:text-gray-500">
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <QuickFilters
               selectedFilters={selectedFilters}
               onFilterChange={handleFilterChange}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredBuilds.map(build => (
-                <RecommendationCard 
-                  key={build.id} 
-                  build={build}
-                  onClick={() => setSelectedBuild(build)}
-                />
-              ))}
+            <div className="mt-4">
+              <p className="text-sm text-gray-500 mb-4">Showing {filteredBuilds.length} of {SAMPLE_BUILDS.length} builds</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredBuilds.map(build => (
+                  <RecommendationCard 
+                    key={build.id} 
+                    build={build}
+                    onClick={() => setSelectedBuild(build)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )}

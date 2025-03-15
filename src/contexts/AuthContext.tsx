@@ -10,6 +10,7 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
+import { createUserProfile } from '../firebase/userProfile';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -38,7 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Sign up with email and password
   const signUp = (email: string, password: string): Promise<User> => {
     return createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => userCredential.user);
+      .then((userCredential) => {
+        // Create user profile in Firestore
+        createUserProfile(userCredential.user).catch(err => {
+          console.error("Error creating user profile:", err);
+        });
+        return userCredential.user;
+      });
   };
 
   // Sign in with email and password
@@ -51,7 +58,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = (): Promise<User> => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider)
-      .then((result) => result.user);
+      .then((result) => {
+        // Create or update user profile in Firestore
+        createUserProfile(result.user).catch(err => {
+          console.error("Error creating user profile for Google sign-in:", err);
+        });
+        return result.user;
+      });
   };
 
   // Log out

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { FiMail, FiX, FiKey } from 'react-icons/fi';
+import { auth } from '../firebase/config';
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
 
 interface ResetPasswordProps {
   onClose: () => void;
@@ -22,6 +24,17 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onSwitchToSignIn
     setLoading(true);
     
     try {
+      // Check if the email exists in Firebase Auth
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      
+      if (methods.length === 0) {
+        // Email doesn't exist in the database
+        setError('No account found with this email address. Please check your email or create a new account.');
+        setLoading(false);
+        return;
+      }
+      
+      // Email exists, proceed with password reset
       await resetPassword(email);
       setMessage('Check your email for password reset instructions');
     } catch (err: any) {
@@ -82,7 +95,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onSwitchToSignIn
             disabled={loading}
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            {loading ? 'Sending...' : 'Reset Password'}
+            {loading ? 'Checking...' : 'Reset Password'}
           </button>
         </form>
 

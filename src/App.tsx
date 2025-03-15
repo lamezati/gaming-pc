@@ -3,11 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import VerifyEmail from './components/auth/VerifyEmail';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import EmailVerificationReminder from './components/auth/EmailVerificationReminder';
+import Login from './components/auth/Login.tsx';
+import Register from './components/auth/Register.tsx';
+import VerifyEmail from './components/auth/VerifyEmail.tsx';
+import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
+import EmailVerificationReminder from './components/auth/EmailVerificationReminder.tsx';
 
 function App() {
   return (

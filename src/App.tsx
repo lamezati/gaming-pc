@@ -18,7 +18,7 @@ const SAMPLE_BUILDS: PCBuild[] = [
       'https://images.unsplash.com/photo-1598550476439-6847785fcea6?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1661961111184-11317b40adb2?auto=format&fit=crop&w=800&q=80'
     ],
-    description: 'High-end gaming PC perfect for 4K gaming and streaming',
+    description: 'High-end gaming PC perfect for 4K gaming and streaming with top-of-the-line components and premium cooling system for intense gaming sessions.',
     specs: {
       cpu: 'Intel Core i9-13900K',
       gpu: 'NVIDIA RTX 4080',

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Monitor, Search, Settings } from 'lucide-react';
+import { Monitor, Search, Settings, User } from 'lucide-react';
 import PreferencesForm from './components/PreferencesForm';
 import RecommendationCard from './components/RecommendationCard';
 import QuickFilters from './components/QuickFilters';
 import ProductDetails from './components/ProductDetails';
+import Auth, { AuthMode } from './components/Auth';
+import UserProfile from './components/UserProfile';
+import { useAuth } from './contexts/AuthContext';
 import { UserPreferences, PCBuild } from './types';
 
 const SAMPLE_BUILDS: PCBuild[] = [
@@ -278,6 +281,9 @@ function App() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedBuild, setSelectedBuild] = useState<PCBuild | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.Closed);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const { currentUser } = useAuth();
   const [preferences, setPreferences] = useState<UserPreferences>({
     buildType: '',
     budget: 1500,
@@ -333,13 +339,32 @@ function App() {
     });
   });
 
+  const handleAuthClick = () => {
+    if (currentUser) {
+      setShowUserProfile(true);
+    } else {
+      setAuthMode(AuthMode.SignIn);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center">
-            <Monitor className="w-8 h-8 text-blue-600" />
-            <h1 className="ml-3 text-2xl font-bold text-gray-900">Gaming PC Builder</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Monitor className="w-8 h-8 text-blue-600" />
+              <h1 className="ml-3 text-2xl font-bold text-gray-900">Gaming PC Builder</h1>
+            </div>
+            <button
+              onClick={handleAuthClick}
+              className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100"
+            >
+              <User className="w-6 h-6 text-blue-600" />
+              <span className="text-sm font-medium">
+                {currentUser ? currentUser.email?.split('@')[0] : 'Sign In'}
+              </span>
+            </button>
           </div>
         </div>
       </header>
@@ -400,6 +425,22 @@ function App() {
         )}
       </main>
 
+      {/* Auth Components */}
+      {authMode !== AuthMode.Closed && (
+        <Auth
+          mode={authMode}
+          onClose={() => setAuthMode(AuthMode.Closed)}
+        />
+      )}
+
+      {/* User Profile */}
+      {showUserProfile && (
+        <UserProfile
+          onClose={() => setShowUserProfile(false)}
+        />
+      )}
+
+      {/* Product Details */}
       {selectedBuild && (
         <ProductDetails
           build={selectedBuild}
